@@ -15,18 +15,18 @@ It is not production code. No auth, no tests, no error handling.
 
 ## Versions this was verified against
 
-| Package | Version |
-| --- | --- |
-| Node | 24.22.0 (ABI 137) |
-| Bun (package manager only) | 1.4.3 |
-| @sveltejs/kit | 2.70.3 |
-| vite | 8.3.4 |
-| @sveltejs/vite-plugin-svelte | 7.3.1 |
-| svelte | 5.57.2 |
-| svelte-adapter-uws | 0.5.10 |
-| svelte-realtime | 0.5.13 |
-| uWebSockets.js | v20.71.0 |
-| typescript | 7.0.2 |
+| Package                      | Version           |
+| ---------------------------- | ----------------- |
+| Node                         | 24.22.0 (ABI 137) |
+| Bun (package manager only)   | 1.4.3             |
+| @sveltejs/kit                | 2.70.3            |
+| vite                         | 8.3.4             |
+| @sveltejs/vite-plugin-svelte | 7.3.1             |
+| svelte                       | 5.57.2            |
+| svelte-adapter-uws           | 0.5.10            |
+| svelte-realtime              | 0.5.13            |
+| uWebSockets.js               | v20.71.0          |
+| typescript                   | 7.0.2             |
 
 ## Run it
 
@@ -66,7 +66,7 @@ Dev, in a browser, with a second tab open as the control:
 
 Two things worth knowing:
 
-- ⚠️ A **hidden** document stops applying stream updates. With two tabs open, the visible tab tracked every change while the hidden one froze until it was brought forward. The browser reports `document.visibilityState` per tab, and in every run the frozen tab was exactly the `hidden` one. Worth knowing for a dashboard someone leaves in the background. (An earlier version of this file claimed the client that *sends* a mutation never sees its own update. That was wrong: the sending tab was simply the hidden one in those runs.)
+- ⚠️ A **hidden** document stops applying stream updates. With two tabs open, the visible tab tracked every change while the hidden one froze until it was brought forward. The browser reports `document.visibilityState` per tab, and in every run the frozen tab was exactly the `hidden` one. Worth knowing for a dashboard someone leaves in the background. (An earlier version of this file claimed the client that _sends_ a mutation never sees its own update. That was wrong: the sending tab was simply the hidden one in those runs.)
 - ✅ `bunx tsc --noEmit` exits clean, including the generated `$live/counter` types.
 - ℹ️ `svelte-realtime` warns at startup when a live module has no `_guard`, because any authenticated WebSocket can then invoke every handler in it. `counter.ts` carries the library's documented `// realtime-allow-public` comment to declare itself intentionally open. A real app should use a `_guard` instead.
 
