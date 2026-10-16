@@ -9,3 +9,12 @@ declare module '$live/counter' {
   export const counter: StreamStore<any | undefined | { error: RpcError }> & { load(platform: any, options?: { args?: any[]; user?: any }): Promise<any> };
   export const empty: Readable<undefined>;
 }
+
+declare module '$live/duel' {
+  import type { StreamStore, RpcError } from 'svelte-realtime/client';
+  import type { Readable } from 'svelte/store';
+
+  export type ErrorCode = 'INVALID_ARG' | 'INVALID_STATE' | 'RATE_LIMITED';
+  export const duel: { data: (...args: any[]) => StreamStore<any>, presence?: (...args: any[]) => StreamStore<any>, cursors?: (...args: any[]) => StreamStore<any>, [action: string]: (...args: any[]) => Promise<any> | ((...args: any[]) => StreamStore<any>) };
+  export const empty: Readable<undefined>;
+}
