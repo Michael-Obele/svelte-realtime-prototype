@@ -5,7 +5,7 @@ declare module '$live/counter' {
   import type { StreamStore, RpcError } from 'svelte-realtime/client';
   import type { Readable } from 'svelte/store';
 
-  export const increment: (...args: any[]) => Promise<any>;
-  export const counter: StreamStore<any> & { load(platform: any, options?: { args?: any[]; user?: any }): Promise<any> };
+  export const increment: () => Promise<any>;
+  export const counter: StreamStore<any | undefined | { error: RpcError }> & { load(platform: any, options?: { args?: any[]; user?: any }): Promise<any> };
   export const empty: Readable<undefined>;
 }

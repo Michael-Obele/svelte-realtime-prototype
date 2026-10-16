@@ -6,11 +6,12 @@ It is not production code. No auth, no tests, no error handling.
 
 ## What is in here
 
-- `src/live/counter.js` - one RPC function (`increment`) and one reactive stream (`counter`), copied from the library's own CLI template
-- `src/hooks.ws.js` - the WebSocket upgrade hook. This is the library's scaffolded default: it accepts every connection and gives it a random id
+- `src/live/counter.ts` - one RPC function (`increment`) and one reactive stream (`counter`), copied from the library's own CLI template
+- `src/hooks.ws.ts` - the WebSocket upgrade hook. This is the library's scaffolded default: it accepts every connection and gives it a random id
 - `src/routes/+page.svelte` - the library's counter example page, plus `id` attributes so a test can assert on it
 - `svelte.config.js` - `svelte-adapter-uws` with `websocket: true`
-- `vite.config.js` - the three required plugins: `sveltekit()`, `uws()`, `realtime()`
+- `vite.config.ts` - the three required plugins: `sveltekit()`, `uws()`, `realtime()`, on port 5199
+- `tsconfig.json` - extends the generated `.svelte-kit/tsconfig.json`, strict on
 
 ## Versions this was verified against
 
@@ -25,6 +26,7 @@ It is not production code. No auth, no tests, no error handling.
 | svelte-adapter-uws | 0.5.10 |
 | svelte-realtime | 0.5.13 |
 | uWebSockets.js | v20.71.0 |
+| typescript | 7.0.2 |
 
 ## Run it
 
@@ -64,8 +66,9 @@ Dev, in a browser, with a second tab open as the control:
 
 Two things worth knowing:
 
-- ⚠️ The client that *sends* the mutation does not reflect it in its own view. Reproduced with a single tab: after a reload the page shows the correct current count, then three clicks leave the display unchanged while the server-side count advances. Reloading shows the new value. So there is no self-echo: the acting tab only updates when another client publishes.
-- ⚠️ `svelte-realtime` warns at startup that `src/live/counter` has no `_guard`, meaning any authenticated WebSocket can invoke any handler in the module. The library's documented fix is a `// realtime-allow-public` comment (used here, since this is a demo) or a real `_guard`.
+- ⚠️ A **hidden** document stops applying stream updates. With two tabs open, the visible tab tracked every change while the hidden one froze until it was brought forward. The browser reports `document.visibilityState` per tab, and in every run the frozen tab was exactly the `hidden` one. Worth knowing for a dashboard someone leaves in the background. (An earlier version of this file claimed the client that *sends* a mutation never sees its own update. That was wrong: the sending tab was simply the hidden one in those runs.)
+- ✅ `bunx tsc --noEmit` exits clean, including the generated `$live/counter` types.
+- ℹ️ `svelte-realtime` warns at startup when a live module has no `_guard`, because any authenticated WebSocket can then invoke every handler in it. `counter.ts` carries the library's documented `// realtime-allow-public` comment to declare itself intentionally open. A real app should use a `_guard` instead.
 
 ## Not tested here
 
