@@ -1,6 +1,7 @@
 <script lang="ts">
     import { duel } from "$live/duel";
     import { empty } from "svelte-realtime/client";
+    import { resolve } from "$app/paths";
     import { shortName, tabPlayerId } from "$lib/player-id";
 
     const matchId = "demo";
@@ -90,129 +91,127 @@
     }
 </script>
 
-<h1>Quiz duel demo</h1>
-<p id="duel-hint">
-    Fixed room <code>demo</code>. Open a second tab to duel — both tabs stay in
-    sync.
-</p>
-{#if myId}
-    <p id="you-are">You are {shortName(myId)} — reloading keeps your seat.</p>
-{/if}
-
-{#if connecting}
-    <p id="duel-status">Connecting…</p>
-{:else if status === "lobby"}
-    <p id="duel-status">Lobby — press Start when both players are here.</p>
-{:else if status === "playing"}
-    <p id="duel-status">
-        Question {(question?.index ?? 0) + 1} of {question?.total ?? 0}
+<div class="mx-auto max-w-2xl px-4 py-8">
+    <a
+        href={resolve("/")}
+        class="text-sm font-medium text-zinc-400 underline-offset-4 hover:text-zinc-100 hover:underline"
+    >
+        ← Shared counter
+    </a>
+    <h1 class="mt-4 text-2xl font-bold tracking-tight">Quiz duel demo</h1>
+    <p id="duel-hint" class="mt-1 text-zinc-400">
+        Fixed room <code class="rounded bg-zinc-900 px-1 text-amber-300"
+            >demo</code
+        >. Open a second tab to duel — both tabs stay in sync.
     </p>
-{:else if status === "finished"}
-    <p id="duel-status">Finished — press Start to play again.</p>
-{/if}
-
-{#if $dataError}
-    <p id="duel-subscribe-error" role="alert">
-        Subscription error: {$dataError.message}
-    </p>
-{/if}
-
-<p id="player-count">{players.length} playing</p>
-{#if players.length > 0}
-    <ul id="player-list">
-        {#each players as player (player.id)}
-            <li>{player.name}</li>
-        {/each}
-    </ul>
-{/if}
-
-{#if question}
-    <section aria-label="Current question">
-        <h2 id="question">{question.text}</h2>
-        <div id="choices">
-            {#each question.choices as choice, i (choice)}
-                <button
-                    disabled={pending !== "idle" || answeredCurrent}
-                    onclick={() => onAnswer(i)}
-                >
-                    {choice}
-                </button>
-            {/each}
-        </div>
-    </section>
-{/if}
-
-{#if visibleFeedback}
-    <p id="feedback" aria-live="polite">{visibleFeedback}</p>
-{/if}
-
-{#if error}
-    <p id="duel-error" role="alert">{error}</p>
-{/if}
-
-{#if scores.length > 0}
-    <h2>Scoreboard</h2>
-    <ol id="scoreboard">
-        {#each scores as entry (entry.id)}
-            <li class={{ me: entry.id === myId }}>
-                {entry.name}: {entry.score}
-            </li>
-        {/each}
-    </ol>
-{/if}
-
-<div id="controls">
-    {#if status === "lobby" || status === "finished"}
-        <button id="start" disabled={pending !== "idle"} onclick={onStart}>
-            {pending === "starting"
-                ? "Starting…"
-                : status === "finished"
-                  ? "Play again"
-                  : "Start"}
-        </button>
-    {:else if status === "playing"}
-        <button id="next" disabled={pending !== "idle"} onclick={onNext}>
-            {pending === "nexting" ? "Next…" : "Next question"}
-        </button>
+    {#if myId}
+        <p id="you-are" class="mt-1 text-zinc-400">
+            You are {shortName(myId)} — reloading keeps your seat.
+        </p>
     {/if}
-</div>
 
-<style>
-    h1 {
-        font-size: 1.5rem;
-        margin-bottom: 0.25rem;
-    }
-    #duel-hint {
-        color: #555;
-        margin-top: 0;
-    }
-    #choices {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        max-width: 24rem;
-        margin: 0.75rem 0;
-    }
-    button {
-        padding: 0.5rem 0.75rem;
-        font-size: 1rem;
-        cursor: pointer;
-    }
-    button:disabled {
-        cursor: default;
-        opacity: 0.6;
-    }
-    #feedback {
-        font-weight: 600;
-    }
-    #duel-error,
-    #duel-subscribe-error {
-        color: #a00;
-    }
-    #controls {
-        margin-top: 1rem;
-    }
-    .me {
-        font-weight: 700;
-    }
-</style>
+    <p id="duel-status" class="mt-4 text-lg font-medium" aria-live="polite">
+        {#if connecting}
+            Connecting…
+        {:else if status === "lobby"}
+            Lobby — press Start when both players are here.
+        {:else if status === "playing"}
+            Question {(question?.index ?? 0) + 1} of {question?.total ?? 0}
+        {:else if status === "finished"}
+            Finished — press Start to play again.
+        {/if}
+    </p>
+
+    {#if $dataError}
+        <p
+            id="duel-subscribe-error"
+            class="mt-2 font-medium text-red-300"
+            role="alert"
+        >
+            Subscription error: {$dataError.message}
+        </p>
+    {/if}
+
+    <p id="player-count" class="mt-4 font-medium">
+        {players.length} playing
+    </p>
+    {#if players.length > 0}
+        <ul id="player-list" class="mt-1 list-disc pl-5">
+            {#each players as player (player.id)}
+                <li>{player.name}</li>
+            {/each}
+        </ul>
+    {/if}
+
+    {#if question}
+        <section aria-label="Current question" class="mt-4">
+            <h2 id="question" class="text-xl font-semibold">
+                {question.text}
+            </h2>
+            <div id="choices" class="mt-3 flex max-w-md flex-col gap-2">
+                {#each question.choices as choice, i (choice)}
+                    <button
+                        class="rounded-lg border border-zinc-500 bg-zinc-900 px-4 py-2 text-left motion-safe:transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={pending !== "idle" || answeredCurrent}
+                        onclick={() => onAnswer(i)}
+                    >
+                        {choice}
+                    </button>
+                {/each}
+            </div>
+        </section>
+    {/if}
+
+    {#if visibleFeedback}
+        <p
+            id="feedback"
+            class="mt-3 font-semibold text-amber-300"
+            aria-live="polite"
+        >
+            {visibleFeedback}
+        </p>
+    {/if}
+
+    {#if error}
+        <p id="duel-error" class="mt-2 font-medium text-red-300" role="alert">
+            {error}
+        </p>
+    {/if}
+
+    {#if scores.length > 0}
+        <h2 class="mt-6 text-lg font-semibold">Scoreboard</h2>
+        <ol id="scoreboard" class="mt-1 list-decimal pl-5">
+            {#each scores as entry (entry.id)}
+                <li class={{ "font-bold text-amber-300": entry.id === myId }}>
+                    {entry.name}: {entry.score}
+                </li>
+            {/each}
+        </ol>
+    {/if}
+
+    <div id="controls" class="mt-6">
+        {#if status === "lobby" || status === "finished"}
+            <button
+                id="start"
+                class="rounded-lg bg-amber-400 px-4 py-2 font-semibold text-zinc-950 motion-safe:transition-colors hover:bg-amber-300 disabled:opacity-50"
+                disabled={pending !== "idle"}
+                onclick={onStart}
+            >
+                {pending === "starting"
+                    ? "Starting…"
+                    : status === "finished"
+                      ? "Play again"
+                      : "Start"}
+            </button>
+        {:else if status === "playing"}
+            <button
+                id="next"
+                class="rounded-lg bg-amber-400 px-4 py-2 font-semibold text-zinc-950 motion-safe:transition-colors hover:bg-amber-300 disabled:opacity-50"
+                disabled={pending !== "idle"}
+                onclick={onNext}
+            >
+                {pending === "nexting" ? "Next…" : "Next question"}
+            </button>
+        {/if}
+    </div>
+</div>
