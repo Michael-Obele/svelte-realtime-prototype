@@ -10,7 +10,7 @@
     "start": "node build"
   },
   "dependencies": {
-    "uWebSockets.js": "file:vendor/uWebSockets.js"
+    "uWebSockets.js": "uNetworking/uWebSockets.js"
   },
   "devDependencies": {
     "@sveltejs/kit": "^2.70.0",
