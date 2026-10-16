@@ -1,0 +1,24 @@
+{
+  "name": "svelte-realtime-prototype",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "vendor:uws": "git clone --depth 1 --single-branch --branch v20.71.0 https://github.com/uNetworking/uWebSockets.js.git vendor/uWebSockets.js",
+    "dev": "vite dev --port 5199",
+    "build": "vite build",
+    "start": "node build"
+  },
+  "dependencies": {
+    "uWebSockets.js": "file:vendor/uWebSockets.js"
+  },
+  "devDependencies": {
+    "@sveltejs/kit": "^2.70.0",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "svelte": "^5.46.0",
+    "svelte-adapter-uws": "^0.5.10",
+    "svelte-realtime": "^0.5.13",
+    "vite": "^8.0.0",
+    "ws": "^8.19.0"
+  }
+}
