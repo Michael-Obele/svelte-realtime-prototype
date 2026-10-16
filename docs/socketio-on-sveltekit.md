@@ -19,12 +19,12 @@ Socket.IO is an MIT library you host yourself. It is not a service, and it is fr
 
 What you write:
 
-| File | Job |
-| --- | --- |
-| `src/lib/server/io.ts` | Creates the Socket.IO server once, holds rooms and handlers |
-| `vite.config.ts` | A plugin that attaches it to Vite's HTTP server in dev |
-| `server.js` | Creates the HTTP server, mounts `build/handler.js`, attaches Socket.IO |
-| a client module | `socket.io-client`, initialised once behind a `browser` guard |
+| File                   | Job                                                                    |
+| ---------------------- | ---------------------------------------------------------------------- |
+| `src/lib/server/io.ts` | Creates the Socket.IO server once, holds rooms and handlers            |
+| `vite.config.ts`       | A plugin that attaches it to Vite's HTTP server in dev                 |
+| `server.js`            | Creates the HTTP server, mounts `build/handler.js`, attaches Socket.IO |
+| a client module        | `socket.io-client`, initialised once behind a `browser` guard          |
 
 You get rooms (`socket.join`, `io.to(room).emit`), automatic reconnection with an offline buffer, acks, and per-socket auth from the session cookie. In production it is one process on one port. Express is not required; the plain Node HTTP server is enough.
 
@@ -41,20 +41,20 @@ The shape is different in a way that suits Svelte: you write a function on the s
 
 ## How Socket.IO concepts map
 
-| Socket.IO | svelte-realtime | Verbatim? | What changes |
-| --- | --- | --- | --- |
-| Rooms: `socket.join()`, `io.to(room).emit()` | Topics: `ctx.publish(topic, event, data)` plus `live.stream(topic, …)`, or `live.room()` which bundles a topic, its data, presence and actions into one declaration | No | Membership is implicit. You are in a topic because you subscribed to its stream. No imperative join on the client. |
-| Namespaces | **Nothing equivalent** | n/a | Nearest is one live module per feature, plus topic naming (`match:123`). |
-| Acks: `socket.emit(x, data, cb)` | The return value of the function you call | No | `await startMatch(id)` gives you the result. The callback pattern disappears, which is a simplification. |
-| `io.use()` middleware | `_guard` per module, `live.middleware()` globally, `live.scoped()` per function | No | Same idea, three different seams. |
-| `socket.handshake.auth` | `upgrade()` in `src/hooks.ws.ts`, returning user data or `false` | No | Auth happens before the socket exists, using the normal session cookie. |
-| Rooms per entity | Dynamic topics or `live.room()` | No | Room identity comes from a function, e.g. `(ctx, matchId) => 'match:' + matchId`. |
-| `socket.io-client` | Generated `$live/*` stubs and the adapter's client stores | No | Different package, different mental model: call a function, subscribe to a stream. |
-| Reconnection with backoff and buffering | Built in | Concept only | Nothing to configure the way `reconnectionDelay` works. |
-| `connectionStateRecovery` | Replay: in-memory per topic, or Redis sorted sets with sequence numbers across restarts | No | Same goal, different mechanics. Ordering is guaranteed per topic. |
-| `@socket.io/redis-adapter` for multiple servers | `svelte-adapter-uws-extensions` (Redis or Postgres pub/sub, presence, replay, rate limits) | No | Same trap as Socket.IO: the core `publish()` only reaches clients on the current process. |
-| Sticky sessions | Not needed | n/a | `SO_REUSEPORT` lets several Node processes bind the same port, and the adapter relays publishes across worker threads for free. |
-| HTTP long-polling fallback | **Nothing equivalent** | n/a | WebSocket only. If you depended on the fallback for hostile networks, that is gone. |
+| Socket.IO                                       | svelte-realtime                                                                                                                                                     | Verbatim?    | What changes                                                                                                                    |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Rooms: `socket.join()`, `io.to(room).emit()`    | Topics: `ctx.publish(topic, event, data)` plus `live.stream(topic, …)`, or `live.room()` which bundles a topic, its data, presence and actions into one declaration | No           | Membership is implicit. You are in a topic because you subscribed to its stream. No imperative join on the client.              |
+| Namespaces                                      | **Nothing equivalent**                                                                                                                                              | n/a          | Nearest is one live module per feature, plus topic naming (`match:123`).                                                        |
+| Acks: `socket.emit(x, data, cb)`                | The return value of the function you call                                                                                                                           | No           | `await startMatch(id)` gives you the result. The callback pattern disappears, which is a simplification.                        |
+| `io.use()` middleware                           | `_guard` per module, `live.middleware()` globally, `live.scoped()` per function                                                                                     | No           | Same idea, three different seams.                                                                                               |
+| `socket.handshake.auth`                         | `upgrade()` in `src/hooks.ws.ts`, returning user data or `false`                                                                                                    | No           | Auth happens before the socket exists, using the normal session cookie.                                                         |
+| Rooms per entity                                | Dynamic topics or `live.room()`                                                                                                                                     | No           | Room identity comes from a function, e.g. `(ctx, matchId) => 'match:' + matchId`.                                               |
+| `socket.io-client`                              | Generated `$live/*` stubs and the adapter's client stores                                                                                                           | No           | Different package, different mental model: call a function, subscribe to a stream.                                              |
+| Reconnection with backoff and buffering         | Built in                                                                                                                                                            | Concept only | Nothing to configure the way `reconnectionDelay` works.                                                                         |
+| `connectionStateRecovery`                       | Replay: in-memory per topic, or Redis sorted sets with sequence numbers across restarts                                                                             | No           | Same goal, different mechanics. Ordering is guaranteed per topic.                                                               |
+| `@socket.io/redis-adapter` for multiple servers | `svelte-adapter-uws-extensions` (Redis or Postgres pub/sub, presence, replay, rate limits)                                                                          | No           | Same trap as Socket.IO: the core `publish()` only reaches clients on the current process.                                       |
+| Sticky sessions                                 | Not needed                                                                                                                                                          | n/a          | `SO_REUSEPORT` lets several Node processes bind the same port, and the adapter relays publishes across worker threads for free. |
+| HTTP long-polling fallback                      | **Nothing equivalent**                                                                                                                                              | n/a          | WebSocket only. If you depended on the fallback for hostile networks, that is gone.                                             |
 
 ## What you cannot do
 
