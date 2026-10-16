@@ -13,6 +13,13 @@ It is not production code. No auth, no tests, no error handling.
 - `vite.config.ts` - the three required plugins: `sveltekit()`, `uws()`, `realtime()`, on port 5199
 - `tsconfig.json` - extends the generated `.svelte-kit/tsconfig.json`, strict on
 
+## Docs
+
+Two notes written for someone starting from scratch, both in [`docs/`](./docs):
+
+- [`docs/socketio-on-sveltekit.md`](./docs/socketio-on-sveltekit.md) - why socket setups feel complicated on SvelteKit, how Socket.IO's concepts map onto this stack, what does not transfer, and which of the four options is simplest for a given host
+- [`docs/quiz-duels.md`](./docs/quiz-duels.md) - a start to finish setup guide for building head-to-head quizzes: requirements, install, the five files, modelling a match with `live.room()`, auth, the traps, and an ordered list of milestones
+
 ## Versions this was verified against
 
 | Package                      | Version           |
